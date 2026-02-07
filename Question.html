@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Be My Valentine? 💘</title>
+
+  <style>
+    :root { --bg1:#ffe5ec; --bg2:#ff9ab3; --accent:#ff2d55; }
+    * { box-sizing: border-box; }
+
+    body{
+      margin:0; height:100vh; overflow:hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+    }
+
+    .card{
+      width:min(580px, 92vw);
+      padding:34px 22px 22px;
+      background: rgba(255,255,255,0.80);
+      backdrop-filter: blur(10px);
+      border-radius: 26px;
+      box-shadow: 0 22px 70px rgba(0,0,0,0.18);
+      text-align:center;
+      position: relative;
+      animation: floatCard 3.5s ease-in-out infinite;
+      border: 1px solid rgba(255,255,255,0.35);
+    }
+    @keyframes floatCard{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-6px); }
+    }
+
+    h1{ margin: 4px 0 8px; font-size: 32px; letter-spacing: .2px; }
+    p{ margin: 0 0 16px; opacity: .86; }
+
+    .sticker{
+      position:absolute; top: 14px; right: 16px;
+      font-size: 28px; transform: rotate(10deg);
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,.12));
+      user-select:none;
+      animation: wiggle 2.4s ease-in-out infinite;
+    }
+    @keyframes wiggle{
+      0%,100%{ transform: rotate(10deg) translateY(0); }
+      50%{ transform: rotate(6deg) translateY(-2px); }
+    }
+
+    /* Love meter */
+    .meter{
+      width: min(420px, 86vw);
+      margin: 10px auto 18px;
+      text-align: left;
+      user-select:none;
+    }
+    .meterTop{
+      display:flex; justify-content:space-between; align-items:center;
+      font-weight: 750;
+      font-size: 14px;
+      opacity:.85;
+      margin-bottom: 8px;
+    }
+    .bar{
+      width: 100%;
+      height: 12px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 999px;
+      overflow:hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .fill{
+      height:100%;
+      width: 97%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255,45,85,.55), rgba(255,45,85,.95));
+      transition: width 220ms ease;
+    }
+
+    .btns{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      position: relative;
+      min-height: 56px;
+      padding-bottom: 4px;
+    }
+
+    button{
+      border:0; cursor:pointer;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 16px; font-weight: 800;
+      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      box-shadow: 0 12px 28px rgba(0,0,0,.12);
+      user-select:none;
+      will-change: transform;
+    }
+    button:active{ transform: scale(.98); }
+
+    #yes{
+      background: var(--accent); color: #fff;
+      position: relative;
+      animation: pulse 1.35s ease-in-out infinite;
+      filter: saturate(1.1);
+    }
+    @keyframes pulse{
+      0%,100%{ transform: translateY(0) scale(1); }
+      50%{ transform: translateY(-1px) scale(1.04); }
+    }
+
+    /* "No" will be moved/shrunk */
+    #no{
+      background: #fff; color: #111;
+      border: 2px solid rgba(255,45,85,.25);
+      position: relative;
+    }
+
+    #message{
+      margin-top: 14px;
+      font-size: 18px;
+      font-weight: 800;
+      min-height: 28px;
+    }
+
+    /* burst particles */
+    .particle{
+      position: fixed;
+      left: var(--x); top: var(--y);
+      transform: translate(-50%, -50%);
+      font-size: var(--s);
+      animation: fly var(--d) ease-out forwards;
+      pointer-events:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+      user-select:none;
+    }
+    @keyframes fly{
+      0%   { opacity: 0; transform: translate(-50%,-50%) scale(.6); }
+      10%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.25); }
+    }
+
+    /* floating hearts background */
+    .heart{
+      position: fixed;
+      bottom: -40px;
+      left: var(--lx);
+      font-size: var(--fs);
+      opacity: .75;
+      animation: floatUp var(--fd) linear infinite;
+      pointer-events:none;
+      user-select:none;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
+    }
+    @keyframes floatUp{
+      from { transform: translateY(0) rotate(0deg); }
+      to   { transform: translateY(calc(-110vh)) rotate(360deg); opacity: 0; }
+    }
+
+    /* little glow ring when accepted */
+    .glow{
+      position: fixed;
+      left: var(--x); top: var(--y);
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.85);
+      box-shadow: 0 0 0 0 rgba(255,45,85,.35);
+      transform: translate(-50%,-50%);
+      animation: ring 700ms ease-out forwards;
+      pointer-events:none;
+    }
+    @keyframes ring{
+      from{ opacity:1; box-shadow: 0 0 0 0 rgba(255,45,85,.35); transform: translate(-50%,-50%) scale(.9); }
+      to{ opacity:0; box-shadow: 0 0 0 28px rgba(255,45,85,0); transform: translate(-50%,-50%) scale(1.2); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="sticker">🧸💖</div>
+    <h1>Will you be my Valentine? 💘</h1>
+    <p>You only have one correct answer 😌</p>
+
+    <div class="meter">
+      <div class="meterTop">
+        <span>Love compatibility 💗</span>
+        <span id="pctLabel">97%</span>
+      </div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+    </div>
+
+    <div class="btns" id="btns">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No 🙃</button>
+    </div>
+
+    <div id="message"></div>
+  </div>
+
+<script>
+  const yesBtn = document.getElementById("yes");
+  const noBtn  = document.getElementById("no");
+  const msg    = document.getElementById("message");
+  const btns   = document.getElementById("btns");
+  const fill   = document.getElementById("fill");
+  const pctLabel = document.getElementById("pctLabel");
+
+  // ========= Love Meter =========
+  let lovePct = 97;
+  function setLove(p){
+    lovePct = Math.max(0, Math.min(100, p));
+    fill.style.width = lovePct + "%";
+    pctLabel.textContent = lovePct + "%";
+  }
+  function bumpLove(){
+    if (lovePct < 100) setLove(lovePct + 1);
+  }
+
+  // ========= Cute background hearts =========
+  const floaters = ["💗","💖","💘","💞","💕","💓","✨","🌸"];
+  setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = floaters[Math.floor(Math.random()*floaters.length)];
+    h.style.setProperty("--lx", Math.random()*100 + "vw");
+    h.style.setProperty("--fs", (14 + Math.random()*20) + "px");
+    h.style.setProperty("--fd", (4 + Math.random()*4) + "s");
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 9000);
+  }, 420);
+
+  // ========= Viral No behavior: run away + shrink; Yes grows =========
+  let noIsAbsolute = false;
+  let noScale = 1.0;   // shrinks
+  let yesScale = 1.0;  // grows
+
+  function ensureNoAbsolute(){
+    if (noIsAbsolute) return;
+    const r = noBtn.getBoundingClientRect();
+    const parentR = btns.getBoundingClientRect();
+    noBtn.style.position = "absolute";
+    noBtn.style.left = (r.left - parentR.left) + "px";
+    noBtn.style.top  = (r.top  - parentR.top)  + "px";
+    noBtn.style.transform = "translate(0,0)";
+    noIsAbsolute = true;
+  }
+
+  function moveNo(){
+    ensureNoAbsolute();
+    const parentR = btns.getBoundingClientRect();
+    const pad = 6;
+
+    const maxX = parentR.width  - noBtn.offsetWidth  - pad;
+    const maxY = parentR.height - noBtn.offsetHeight - pad;
+
+    const x = pad + Math.random() * Math.max(0, maxX);
+    const y = pad + Math.random() * Math.max(0, maxY);
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+  }
+
+  function chaseEffect(){
+    // shrink No
+    noScale = Math.max(0.55, noScale - 0.08);
+    noBtn.style.transform = `translate(0,0) scale(${noScale})`;
+
+    // grow Yes slightly
+    yesScale = Math.min(1.35, yesScale + 0.05);
+    yesBtn.style.transform = `scale(${yesScale})`;
+
+    // love meter fills
+    bumpLove();
+
+    // move away
+    moveNo();
+  }
+
+  // Desktop hover chase
+  noBtn.addEventListener("mouseenter", chaseEffect);
+  noBtn.addEventListener("mouseover", chaseEffect);
+
+  // Mobile "touch chase"
+  noBtn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    chaseEffect();
+  }, {passive:false});
+
+  // Also fill love meter on mouse movement (gentle)
+  let lastMove = 0;
+  window.addEventListener("mousemove", () => {
+    const now = Date.now();
+    if (now - lastMove > 380 && lovePct < 100) { // throttle
+      bumpLove();
+      lastMove = now;
+    }
+  }, {passive:true});
+
+  // ========= Tiny sound effects (no external files) =========
+  let audioCtx = null;
+  function getCtx(){
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // resume if suspended (some browsers)
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function tone(freq, durationMs, type="sine", gain=0.04){
+    const ctx = getCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+
+    const t0 = ctx.currentTime;
+    const dur = durationMs / 1000;
+
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0);
+    o.stop(t0 + dur);
+  }
+
+  // "mwah/pop" on YES click: quick glide + tiny pop
+  function mwah(){
+    const ctx = getCtx();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = "sine";
+
+    const t0 = ctx.currentTime;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.05, t0 + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+
+    // glide down like a kiss
+    o.frequency.setValueAtTime(640, t0);
+    o.frequency.exponentialRampToValueAtTime(320, t0 + 0.14);
+
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0);
+    o.stop(t0 + 0.18);
+
+    // tiny pop sparkle after
+    setTimeout(() => tone(1200, 60, "triangle", 0.03), 110);
+  }
+
+  // Sparkle sounds during burst (short random chimes)
+  function sparkleSound(){
+    const freqs = [880, 990, 1046, 1174, 1320, 1568];
+    const f = freqs[Math.floor(Math.random()*freqs.length)];
+    tone(f, 70 + Math.random()*70, "triangle", 0.025);
+  }
+
+  // ========= Typewriter message =========
+  function typeText(text){
+    msg.textContent = "";
+    let i = 0;
+    const t = setInterval(() => {
+      msg.textContent += text[i++];
+      if (i >= text.length) clearInterval(t);
+    }, 22);
+  }
+
+  function glowRing(x,y){
+    const g = document.createElement("div");
+    g.className = "glow";
+    g.style.setProperty("--x", x + "px");
+    g.style.setProperty("--y", y + "px");
+    document.body.appendChild(g);
+    setTimeout(() => g.remove(), 900);
+  }
+
+  // ========= YES celebration =========
+  yesBtn.addEventListener("click", (e) => {
+    // ensure audio works (user gesture)
+    getCtx();
+    mwah();
+
+    setLove(100);
+    typeText("Yaaaaay!! 🥰 I knew it 💖💐✨");
+
+    const x = e.clientX ?? (window.innerWidth/2);
+    const y = e.clientY ?? (window.innerHeight/2);
+    glowRing(x,y);
+
+    for (let i=0;i<4;i++){
+      setTimeout(() => {
+        burst(
+          x + (Math.random()*120 - 60),
+          y + (Math.random()*120 - 60),
+          true
+        );
+      }, i*140);
+    }
+
+    setTimeout(() => burst(window.innerWidth/2, window.innerHeight/2, true), 520);
+  });
+
+  // If "No" ever gets clicked (keyboard), tease + escape
+  noBtn.addEventListener("click", () => {
+    typeText("Hehe… not allowed 😌💞");
+    chaseEffect();
+  });
+
+  function burst(x, y, withSound=false){
+    const items = ["💐","🌸","🌹","✨","⭐","💖","💞","🎉","🌷","💫","🫶"];
+    for(let i=0;i<34;i++){
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.textContent = items[Math.floor(Math.random()*items.length)];
+      p.style.setProperty("--x", x + "px");
+      p.style.setProperty("--y", y + "px");
+      p.style.setProperty("--s", (14 + Math.random()*18) + "px");
+      p.style.setProperty("--d", (650 + Math.random()*800) + "ms");
+
+      const angle = Math.random()*Math.PI*2;
+      const dist = 70 + Math.random()*230;
+      p.style.setProperty("--dx", (Math.cos(angle)*dist) + "px");
+      p.style.setProperty("--dy", (Math.sin(angle)*dist) + "px");
+
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1700);
+
+      // a few sparkle sounds per burst (not every particle)
+      if (withSound && i % 8 === 0) setTimeout(sparkleSound, i * 10);
+    }
+  }
+
+  // Start meter at 97%
+  setLove(97);
+</script>
+</body>
+</html>
